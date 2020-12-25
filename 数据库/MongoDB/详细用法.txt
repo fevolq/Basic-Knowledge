@@ -1,0 +1,211 @@
+cmd下进入使用mongo，退出使用exit
+数据库命名：不能是空字符串，应全部小写，最多64字节，不能含有空格、点、$、/、\和\0(空字符)，还有一些库名是保留的(admin、local、config等)。
+集合命名：不能是空字符串，不能含有空字符，不能以”system.“开头，这是为系统集合保留的前缀。
+文档命名：不能含有\0(空字符,用来表示键的结尾)，.和$有特别的意义，以_下划线开头的键是保留的。
+文档中的键值对是有序的，不能有重复的键，区分大小写，键是字符串，
+
+1.数据库
+  1.1 创建数据库
+        use 库名
+        若该数据库不存在，则新建，若存在，则切换到该数据库
+        eg.use pythonDB
+  1.2 查看数据库
+        1.2.1 查看当前数据库：db
+        1.2.2 查看所有数据库：show dbs
+        注：当创建的数据库中不存在数据时，并不显示在查看的所有数据库的列表中，想要显示出来需要插入一些数据。
+               默认的数据库为test，如果没有创建新的数据库，集合将存放在test数据库中。
+  1.3 删除数据库
+        删除当前数据库：db.dropDatabase()
+
+2.集合
+  2.1 创建集合
+        db.createCollection(name,options)
+        name：要创建的集合名，需要加引号
+        options：可选参数，指定有关内存大小及索引的选项
+        
+    options可选择如下：
+    capped：布尔型：（可选）如果为 true，则创建固定集合。固定集合是指有着固定大小的集合，当达到最大值时，它会自动覆盖最早的文档。当该值为 true 时，必须指定 size 参数。
+    autolndexld：布尔型：（可选）如为 true，自动在 _id 字段创建索引。默认为 false。
+    size：数值：（可选）为固定集合指定一个最大值（以字节计）。如果 capped 为 true，也需要指定该字段。
+    max：数值：（可选）指定固定集合中包含文档的最大数量。
+
+  eg.db.createCollection("runoob") ——不带关键参数
+       db.createCollection("mycol", { capped : true, autoIndexId : true, size : 6142800, max : 10000 }) ——包含关键参数
+        创建固定集合mysol，整个集合空间大小为6142800KB，文档最大个数为10000个。
+
+  注：在MongoDB中，不需要创建集合，当插入一些文档时，MongoDB会自动创建集合
+        eg.db.python.insert({"name":"abc"}) ——会自动创建一个python集合，并插入数据
+
+  2.2 查看集合
+        查看已有集合：show collections 或 show tables
+        查看集合是否有上限：db.集合名.isCapped()
+  2.3 删除集合
+        db.集合名.drop()
+        返回值为：删除成功为true，失败为false。
+
+3.文档
+  文档的数据结构和 JSON 基本一样。所有存储在集合中的数据都是 BSON 格式。
+  BSON 是一种类似 JSON 的二进制形式的存储格式，是 Binary JSON 的简称。
+  每个文档都有一个属性为_id，保证每个文档的唯一性，mongodb默认使用_id作为主键。（_id可以自己设置，也可以由mongodb默认提供，类型为objectID，是一个12字节的十六位进制数，一共是24位的字符串。）
+  3.1 插入文档
+        使用insert()或save()方法
+        db.集合名.insert(文档数据)
+        注：每次的插入命令都会新建一个文档，每次新建的文档都无关联。
+  3.2 更新文档（update()和save()方法）
+        db.集合名.update(
+             <query>,
+             <update>,
+             {upsert:<boolean>,
+              multi:<boolean>,
+              writeConcern:<document>})
+        <query>：查询条件
+        <update>：更改的对象和一些更新的操作符（如$,$inc(指定属性增加特点步长)···）等，类似于sql语句内更改时的set后面的语句，若原文档中没有该记录，则新添加该记录。
+        upsert：可选，这个参数的意思是，如果不存在update的记录，是否插入objNew,true为插入，默认是false，不插入。
+        multi：可选，mongodb 默认是false,只更新找到的第一条记录，如果这个参数为true,就把按条件查出来多条记录全部更新。
+        writeConcern：可选，抛出异常的级别。
+       eg.db.test1.update(
+             {"name":"abc"},
+             {$set:{"name":123}},
+             {multi:true}) ——将所有name的值为abc的都更改为123
+
+        db.集合名.save(
+             <document>,
+             {
+              writeConcern:<document>
+              })
+        document：文档数据
+        writeConcern：可选，抛出异常的级别。
+        eg.db.test1.save({"_id":ObjectId("5cd92ca7fec74ccbdd2063ba"),
+                                    "name":666})
+       注：通过定位自增"_id"来定位需要替换的文档。
+  3.3 删除文档
+        db.集合名.remove(
+         <query>,
+         <justOne>)
+         <query>：（可选）删除的文档的条件。
+         <justOne>：（可选）如果设为true或非0，则只删除一个文档，如果不设置该参数，或使用默认的false，则删除所有符合的文档
+        db.集合名.remove({}) ——清空集合
+  3.4 查看文档
+        db.集合名.find(query,projection) ——查看集合内的所有文档，以非结构化的方式显示出来
+     或db.集合名.find().pretty() ——会以更直观美观的易读方式显示出来
+        query：可选，使用查询操作符指定查询条件
+        projection：可选，使用投影操作符指定返回的键。查询时返回文档中所有键值， 只需省略该参数即可（默认省略）。
+        注：find({条件},{字段:1,_id:0}) ，不要_id显示，则值设为0，其他字段不想显示，不写即可，显示则为1。
+
+条件语句查询：
+操作                     格式                        例子                                                         类似于sql语句
+等于：                 {key:value}              db.test1.find({"name":"abc"}).pretty()     where name="abc"
+lt小于：               {key:{$lt:value}}       db.test1.find({"age":{$lt:25}}).pretty()      where age<25
+lte小于或等于：   {key:{$lte:value}}     db.test1.find({"age":{$lte:25}}).pretty()    where age<=25
+gt大于：              {key:{$gt:value}}      db.test1.find({"age":{$gt:25}}).pretty()    where age>25
+gte大于或等于：  {key:{$gte:value}}    db.test1.find({"age":{$gte:25}}).pretty()   where age>=25
+ne不等于：          {key:{$ne:value}}     db.test1.find({"age":{$ne:25}}).pretty()     where age!=25
+ 
+and ：          {key1:value1,key2:value2}   db.test1.find({"name":"abc","age":18}).pretty()   where name="abc" and age=18
+or ：             {$or:[{key1:value1},{key2:value2}]}   db.test1.find({$or:[{"name":"abc"},{"age":18}]})   
+and与or联合使用：{key1:value1,$or:[{key2:value2},{key3:value3}]}  
+                             db.test1.find({key1:value1,$or:[{key2:value2},{key3:value3}]}).pretty()     
+                             where key1=value1 and (key2=value2 or key3=value3)
+
+范围运算符：in在范围内，nin不在范围内
+      db.collection_name.find({age:{$in:[18,28]}}) ——查找年龄在18到28之间的
+
+操作符：
+$type    db.集合名.find({key:{$type:"string"}}) ——查找集合中key值为字符串的数据
+         或 db.集合名.find({key:{$type:2}}) ——mongodb中类型有对应的数字，使用时可以数字替代
+
+limit()方法，指定读取的记录条数
+     db.集合名.find().limit(number)，若没有指定数字，则默认显示全部数据
+skip()方法，接收一个数字作为跳过的记录条数
+     db.集合名.find().limit(1).skip(1) ——跳过一条显示一条，即显示第二条数据
+     skip()方法的默认参数为0
+sort()方法，通过参数指定排序的字段，并使用1(升)和-1(降)来指定排序方式
+     db.集合名.find().sort({key:1}) ——按key字段来进行升序排列
+三个一起执行时，顺序为先sort()，然后skip()，最后显示limit()
+
+统计：count()
+    db.collection_name.find().count() ——返回集合内文档的总个数
+    db.collection_name.count({gender:true}) ——统计gender:true的个数
+
+去重：distinct()
+    db.collection_name.distinct("去重字段",{条件})
+  eg. db.collection_name.distinct("hometown",{gender:true,age:{$gt:18}})
+  给hometown字段去重，并且gender为true,age大于18。返回的是一个列表，且是hometown对应的值为元素组成的。
+
+聚合：aggregate()
+    db.test.aggregate([{$group : {_id : "$by_user", num_tutorial : {$sum : 1}}}])
+    通过字段by_user对数据进行分组，并计算by_user字段相同值的总和。
+    类似与  select by_user,count(*) from test group by by_user
+管道操作：
+    eg1.
+    db.test.aggregate({$project:{title:1,author:1}}) ——结果中只会显示_id、title、author三个字段（若title、author字段存在的话）
+    默认情况下_id字段时被包含的，若要结果不包含，则：
+    db.test.aggregate({$project:{_id:0,title:1,author:1}})
+    eg2.
+    db.test.aggregate({$skip:5}) ——经过管道操作后，前5个文档被过滤掉
+    eg3.
+    db.test.aggregate([{$match:{score:{$gt:70,$lte:90}}},{$group:{_id:null,count:{$sum:1}}}])
+    $match用于获取分数大于70小于或等于90记录，然后将符合条件的记录送到下一阶段$group管道操作符进行处理
+"""$project：修改输入文档的结构。可以用来重命名、增加或删除域，也可以用于创建计算结果以及嵌套文档。
+    $match：用于过滤数据，只输出符合条件的文档。$match使用MongoDB的标准查询操作。
+    $limit：用来限制MongoDB聚合管道返回的文档数。
+    $skip：在聚合管道中跳过指定数量的文档，并返回余下的文档。
+    $unwind：将文档中的某一个数组类型字段拆分成多条，每条包含数组中的一个值。
+    $group：将集合中的文档分组，可用于统计结果。
+    $sort：将输入文档排序后输出。
+    $geoNear：输出接近某一地理位置的有序文档。
+"""
+
+正则：
+  使用/xxx/   db.collection_name.find({sku:/^a/}) ——查找sku字段中以a开头的
+                    db.collection_name.find({sku:/9$/}) ——查找sku字段中以9结尾的
+  使用$regex ，编写正则，值必须是字符串
+                    db.collection_name.find({sku:{$regex:"^a"}}) ——查找sku字段中以a开头的
+                    db.collection_name.find({sku:{$regex:"9$"}}) ——查找sku字段中以9结尾的
+
+备份与恢复
+备份：命令行中运行：mongodump -h dbhost -d dbname -o dbdirection
+       -h：MongDB所在服务器地址，例如：127.0.0.1，当然也可以指定端口号：127.0.0.1:27017
+       -d：需要备份的数据库实例，如：test
+       -o：备份的数据存放位置，该目录需要提前创建，如：D:\123
+  注：1.运行命令前，需要先进入软件bin目录下
+         2.直接运行mongodump，则会备份所有数据库实例，存放位置为bin目录下的dump目录
+恢复：命令行中运行：mongorestore -h <hostname><:port> -d dbname <path>
+        -h：MongoDB所在服务器地址，默认为： localhost:27017
+        -d：需要恢复的数据库实例，例如：test，当然这个名称也可以和备份时候的不一样，比如test2
+        <path>：设置备份数据所在位置
+
+导入与导出（JSON格式和CSV格式）
+导出：命令行中运行： mongoexport -d 数据库名 -c 集合名 -o 输出的文件路径以及文件名
+         eg.C:\Users\15394>mongoexport -d test -c text01 -o C:\Users\15394\Desktop\新建文件夹\text01.json
+         要导出CSV格式，则为text01.csv       若没有表名格式，则默认为json格式。
+导入：命令行中运行： mongoimport -d 数据库名 -c 集合名 <文件名
+
+    导入csv格式的文件 
+mongoimport -d dbname -c collectionName --type csv --headerline --drop < filename.csv
+
+    导入json格式的文件 
+mongoimport -d dbname -c collectionName --type json --drop < filename.json
+
+    注：要么进入要导入的文件的路径去执行，要么在文件名中加入路径。都需要带文件格式。
+
+>Date() ：当前时间
+>ISODate() ：当前时间（显示格式为下方括号内的格式）
+>ISODate("2019-05-14T09:33:02.903Z").valueOf() ：时间戳（毫秒）
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

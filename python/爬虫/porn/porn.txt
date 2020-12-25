@@ -1,0 +1,65 @@
+使用pymysql数据库内的porn_name、porn_url、porn_urls_do(链接池)表
+
+Title：986
+<h1 class="videoTitle">Japanese sister playing with her sister's breasts</h1>
+<h1 class="videoTitle">Japanese hostess and her maid</h1>
+
+photo_url:1007
+poster="https://ci.phncdn.com/videos/201904/26/220350711/original/(m=eaAaGwObaaaa)(mh=aa3x3WBG46a5PrnN)2.jpg"
+
+source_url:1010
+<source src="https://em-tz.phncdn.com/videos/201904/26/220350711/480P_600K_220350711.mp4?validfrom=1558170950&validto=1558178150&rate=89k&burst=11000k&hash=6rrI%2FSCvsbT7I2sq4gAqFJTh8yE%3D" type="video/mp4" data-res="480p" />
+
+
+链接至其他：
+<a class="js-thumb" href="show/play/ph5cc06e866bebc/japanese-hostess-and-her-maid" title ="Japanese hostess and her maid"><img id="pic_220020931" width="320" height="180" class="lazy" src="https://ci.phncdn.com/videos/201904/24/220020931/original/(m=eafTGgaaaa)(mh=NA14l_d8GpLLGvsM)5.jpg" alt ="Japanese hostess and her maid" onmouseover="startThumbSlide(&#039;220020931&#039;, &#039;(mh=NA14l_d8GpLLGvsM)5&#039;, &#039;https://ci.phncdn.com/videos/201904/24/220020931/original/(m=eafTGgaaaa)&#039;)" onmouseout="stopThumbSlide();" border="0"/>
+
+1.关于本页面链接到其他页面的链接处理：
+新建一个函数，使用正则，找出本页面的其他链接，放置于一个列表中，
+2.关于重复链接的处理：
+从上面的列表中逐个抽取判断是否在数据库url中（或者正则出title，判断title是否在数据库name中）,然后将不在数据库中的元素放置于另一个列表中，从这个列表里取网址来执行主程序（即已完成的部分程序）
+3.关于photo_id的处理：
+可将photo_id放于“保存图片”的函数中，逐次增加（需设为全局变量）。初始id：（断点续传：可根据从数据库读取的photo_id来增加）
+
+注：（略复杂麻烦，不建议：1、2可放置于一个函数内，2内用来判断是否重复和3内用来获取初始id的数据库查询可放置于一个函数内。）
+也就是需增加：正则其他链接的函数，去重函数（包括查询是否在数据库内），查询初始photo_id的数据库函数
+
+
+
+当前页面视频资源的主要html：
+		<div class="fullWhite" id="infoSection">
+			<section class="sectionVideoWrapper goingFull">
+				<h1 class="videoTitle">Japanese sister playing with her sister&#039;s breasts</h1>
+				<div class="videoInfoTop">
+																<span class="categories">
+							<span>Categories:</span><a href="show/categories/asian">Asian</a>, <a href="show/categories/big-tits">Big Tits</a>, <a href="show/categories/toys">Toys</a>, <a href="show/categories/lesbian">Lesbian</a>, <a href="show/categories/mature">Mature</a>, <a href="show/categories/teen">Teen</a>, <a href="show/categories/japanese">Japanese</a>, <a href="show/categories/pussy-licking">Pussy Licking</a></span>
+																<span class="tags">
+							<span>Tags:</span><a href="show/tag/adult-toys">adult toys</a>, <a href="show/tag/big-boobs">big boobs</a>, <a href="show/tag/teenager">teenager</a>, <a href="show/tag/young">young</a>, <a href="show/tag/old">old</a>, <a href="show/tag/lesbian">lesbian</a></span>
+										<span class="js-expand js-tooltip" data-tooltip="View all Stars, categories and tags"><i></i><span>Expand</span></span>
+				</div>
+			</section>
+		</div>
+
+				<div class="fullGrey">
+			<section class="sectionVideoWrapper" id="fullsContainer">
+
+<script src="plays/video.js" type="text/javascript" charset="utf-8"></script>
+<link rel="stylesheet" href="plays/video-js.css" type="text/css" media="screen" title="Video JS">
+<link href="plays/video-quality-selector.css" rel="stylesheet" type="text/css" />
+<script src="plays/video-quality-selector.js"></script>
+<div class="video-js-box">
+<video id="example-2" class="video-js vjs-default-skin vjs-big-play-centered" controls width="924" height="520" 
+
+poster="https://ci.phncdn.com/videos/201904/26/220350711/original/(m=eaAaGwObaaaa)(mh=aa3x3WBG46a5PrnN)2.jpg"
+data-setup="{ }">
+<source src="https://em-tz.phncdn.com/videos/201904/26/220350711/240P_400K_220350711.mp4?validfrom=1558170950&validto=1558178150&rate=54k&burst=11000k&hash=0wq5EjMdH8cfzZaJVwXV90uraaw%3D" type="video/mp4" />
+<source src="https://em-tz.phncdn.com/videos/201904/26/220350711/480P_600K_220350711.mp4?validfrom=1558170950&validto=1558178150&rate=89k&burst=11000k&hash=6rrI%2FSCvsbT7I2sq4gAqFJTh8yE%3D" type="video/mp4" data-res="480p" /></video>
+
+爬取池
+建一个表，三个字段（自增id，爬取网址、是否已爬取（Y\N）），把正则出的所有网址都放在爬取网址中，此时第三栏为N，每次从第二栏中抽取的爬完后，第三栏变为Y
+
+第一次：正则出了9个其他网址，在数据库中插入，且为N，
+第二次，从第二个字段为N的数据条中随机选一个网址来爬取，若完成了爬取，则该数据条的第二个字段变为Y，且正则出的其他网址也插入到数据库，为N。
+
+注：插入其他网址时，需判断是否已经存在与数据库。（用sql语言来执行，已存在该url，则忽略，不存在，则插入。）
+      查询出为N的所有网址组成的，从中随机抽取一个。（用sql语言来完成，返回一个url）

@@ -1,0 +1,47 @@
+启动数据库服务：以管理员模式运行 net start 服务名称(mysql66)。停止是stop，查询所有已开启的服务：net start
+以分号“;“作为每个逻辑行的结尾
+
+查看所有的数据库：show databases;
+离开mysql：quit;
+命令输错，可通过\c来结束（不需要分号）
+
+1.创建一个数据库
+create database 库名;
+eg.create database abc;
+
+2.切换到需要使用的数据库
+use 库名;
+eg.use abc;
+
+3.在库内创建一个表
+create table 表名(包含的数据种类，以逗号“,”分隔);
+eg.create table student(id int,name char(10),age int);
+
+4.查看库内所有的表
+show tables;
+
+5.查看表（的数据）
+select*from 表名;
+eg.select*from student;
+
+6.往表内写入数据
+insert into 表名 values(对应数据类型的值，以逗号分隔),(对应数据类型的值，以逗号分隔),······;
+eg.insert into student values(1,"a",1),(2,'s',2),(3,'d',3);
+
+7.临时修改字符集（插入中文数据）
+插入前，需要先执行命令：set names latin1;(latin1这里代指的是服务端的字符集，不一定就是latin1)
+且关闭客户端再打开后，若要查看数据，也许先执行此命令。
+执行此命令只在当前客户端生效，若重开客户端，需重新执行此命令。（即一次性）
+(不乱码的思想：系统的编码、客户端、服务端、库、表、列，这几项的编码都要统一才不会出现乱码的情况。)
+
+8.查看当前所在的库
+select database();
+
+9.删除库/表
+drop database/table 库名/表名;
+eg.drop database abc;
+     drop table student;
+
+10.删除表内的数据
+delete from 表名 where 数据类型="数据值"
+eg.delete from student where id="3"

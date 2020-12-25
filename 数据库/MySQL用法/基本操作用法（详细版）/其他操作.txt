@@ -1,0 +1,38 @@
+1.（查询）已有数据去重（保留第一条min、保留最后一条max）
+select distinct 字段 from 表名;——根据指定字段内的数据是否有重复，来返回数据。只返回第一条，后面重复的都舍弃。且只返回该字段的数据。
+select distinct 字段1,字段2 from 表名;——只有两个字段的数据都一样（不论大小写），才算重复。其他同上。
+
+select * from 表名 group by 字段1[,字段2[,字段3...]];——分组查询，也可用于去重查询。只会留下第一条，但查询结果的排序是按照字段1来排序。
+select min(id) as id,字段1,字段2,... from 表名 group by 字段;——指定字段内相同数据的记录中，只会保留id最小的记录，且结果只会显示出已经罗列出来的字段（包括id）。
+select max(id) as id,字段1,字段2,... from 表名 group by 字段;——会留下id最大的记录，其他同上。
+
+select * from 表名 group by 字段1[,字段2[,字段3...]] order by 字段;——同上，但是查询结果的排序会按照order by指定的字段来排序。
+select min(id)/max(id) as id,字段1,字段2,... from 表名 group by 字段;
+
+注：只用返回指定重复字段的数据时，用distinct；需要返回所有字段或指定字段时，用group by；还需要按指定排序返回时，group by与order by结合使用。
+
+
+
+2.查询时，随机抽取
+select * from 表名 order by rand() limit 数量;
+select * from 表名 where 条件 order by rand() limit 数量;——从符合条件的数据条中随机抽取指定数量的记录
+
+
+
+3.插入时，针对是否已存在此数据的操作（保留原先、保留现在）
+首先要将判断的字段设置成unique索引。
+    直接修改字段属性：alter table 表名 add unique(字段1[,字段2...]);
+    或在建表时就设置：create table 表名 (字段1 数据类型1,...,unique(字段1[,字段2...]));——详见表操作的最后
+
+数据存在则更新，不存在则插入：insert into 表名(字段1，字段2，...) values(值1，值2，...) on duplicate key update 字段2='值2',字段3='值3',...;——指定的unique索引与原表没有重复数据时，则执行插入，存在重复数据时，则在那条记录中更新update指定的操作，没有指出的字段保持原有数据(状态)，如字段1保持不变。
+
+保留原先：insert ignore into 表名（字段1,字段2） values(值1,值2);——只有当这个新的记录的所有unique索引都不存在重复数据时(或主键和唯一索引不存在重复数据时，需要在此sql语句内写出，如自增id)，才执行插入数据，否则保留原先。
+
+保留现在：replace into 表名 (字段1，字段2，...) values(值1,值2,...);——存在重复数据，则删除原记录，再(在最后)重新插入此纪录。
+
+
+
+
+常见操作：
+抽取符合条件的第一条/最后一条
+select min(id)/max(id) as id,字段1[,字段2[,字段3...]] from 表名 where 条件;

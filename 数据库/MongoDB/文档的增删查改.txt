@@ -1,0 +1,52 @@
+增：
+1.    db.collection_name.insert({"_id":"111"})
+       _id如果已经存在，insert方法会报错，否则会插入数据
+2.    db.collection_name.save({"_id":"111","name":"bob","age":"18"})
+       _id如果存在，会更新其他键(name、age)所对应的值，若键不存在，则插入该键值对，且将原内容全部替换；
+       _id不存在时，会新建一个文档来插入数据
+3.    message = [{"name":"qwe"},{"name":"asd,"age":18},{"name":"abc","age":25,"goal":99}]
+       db.collection_name.insert(message)
+       插入多条数据（文档）
+注：_id，若自己设置，可任意，若不设置，则由mongodb默认设置，且类型为objectID，是一个12字节的十六位进制数，一共是24位的字符串。
+
+
+删：
+1.    db.collection_name.remove({条件},{justOne:true})
+       默认情况下，会删除全部满足的内容，justOne:true时只删一条
+2.    db.collection_name.remove({})
+       清空集合
+3.    db.collection_name.drop()
+       删除整个集合（collection_name）
+注：永久性，不能撤销，不能恢复
+
+
+改：
+1.    db.collection_name.update({name:"bon"},{name:"fan"})
+       将名字由"bon"更改为"fan"。
+       弊端：会将文档内的内容替代。即不论原文档内的内容有多少，更改后只会余下_id和name两个字段（_id不变，name变为fan）
+2.    db.collection_name.update({name:"bob"},{$set:{name:"fan"}})
+       此例子只修改一条数据，即只会将文档内的name内容替代为fan，其他内容不变。
+       此方法，若set后跟多个键值对(都放在同一个{}内)，则会将跟着的所有键值对在文档内进行更改(有该键)或添加(没有该键)，即可更改多条数据或新增数据。
+3.    db.collection_name.update({条件},{$set:{name:jack}},{upsert:true,multi:false})
+       在原有文档中，如果存在该条件，则修改该文档，如果不存在该条件，则增加这条数据文档。想修改的键值对可以有多个。
+       upsert：可选，这个参数的意思是，如果条件在集合中不存在，是否追加该记录文档,true为追加，默认是false，不追加。
+       multi：可选，默认是false,只更新找到的第一条记录，如果这个参数为true,则修改所有符合条件的行
+注：1可用于替换条件文档的全文，2可用于修改已有条件文档内的数据或在该文档内新增数据，3可用于根据条件存在与否选择修改文档数据或新建文档。1、2方法若在集合内找不到符合的条件，则不执行任何操作不更改任何数据。
+
+
+查：
+1.    find() ：查询
+       db.collection_name.find({条件文档})
+2.    findOne() ：只返回第一个
+       db.collection_name.findOne({条件文档})
+3.    pretty() ：将结果格式化
+       db.collection_name.find({条件文档}).pretty()
+注：若没有限制条件，则返回所有该集合内的所有文档（除了2）。
+
+查询条件有多种操作符
+
+
+
+
+
+

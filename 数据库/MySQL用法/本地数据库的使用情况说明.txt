@@ -1,0 +1,25 @@
+delete1库：用于mysql学习教程的使用
+
+test库：用于平常实验数据库的某些操作和某些功能的使用（里面的something表含有10000条数据）
+
+pymysql库：用于python链接数据库的使用，一般应用于爬虫项目，一般情况下不要删除该库和其内容。
+
+scrapy库：用于scrapy框架使用的库
+
+
+pymysql库内的表：
+photo：//python\第三方库\pymysql模块//用于百度图片的爬虫。
+test：用于python中pymysql模块的功能训练。
+用于porn的爬虫：【
+porn_name：记录爬取的url页面的视频的名字(title)，和视频的封面图片的id(photo_id)
+porn_url：记录爬取的url页面的视频封面的id(photo_id)；封面图片的唯一指向地址(photo_url)；
+	       视频资源的唯一指向地址(source_url)；当前爬取的url(face_url)
+porn_urls_do：链接池。记录爬取的链接(url)，其中包含已经爬取的，和当前爬取页面爬出的链接到其他页面的链接(未爬取)；
+		            ny字段用于表明是否已爬取(N代表未爬取，Y代表已爬取)
+		】。
+
+
+scrapy库内的表：
+test：//scrapy_mysql// 用于测试scrapy框架插入数据库的功能。
+
+

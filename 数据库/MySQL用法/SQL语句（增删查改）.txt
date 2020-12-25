@@ -1,0 +1,71 @@
+（https://www.cnblogs.com/xiaozhangpython/p/10768785.html#part_6）
+
+mysql服务端软件即mysqld帮我们管理好文件夹以及文件，前提是作为使用者的我们，需要下载mysql的客户端，或者其他模块来连接到mysqld，然后使用mysql软件规定的语法格式去提交自己命令，实现对文件夹或文件的管理。该命令的语法即sql（Structured Query Language 即结构化查询语言）
+
+SQL语句主要是针对数据库里面三个角色进行操作，对象是：库、表、行，操作包括：增删改查。
+
+　　　　1、库（data文件夹中的文件夹，每创建一个库，这个库的名称就是文件夹的名称，文件夹里面保存着一些这个库相关的初始信息）
+
+　　　　　　增：create database db1 charset utf8; #创建一个库，可以指定字符集 　　　　　　
+
+　　　　　　查：show databases; #查看数据库中所有的库
+　　　　　　　　show create database db1; #查看单独某个库db1的信息 　　　　　　
+
+　　　　　　改：alter database db1 charset latin1; #修改库的字符集，注意语句的格式（其他语句也是这么个格式），alter（修改） database（修改数据库） db1（哪个数据库） charset（字符集） latin1（改成哪个字符集） 　　　　　　
+
+　　　　　　删除: drop database db1; #删除数据库
+
+ 　　　　2、表（操作文件，表是上面库文件夹里面的文件）
+
+　　　　　　先切换库：use db1； #要操作表文件，要先切换到对应的库下才能操作表
+
+　　　　　　　　　　   查看当前所在的是哪个库：select database();
+
+　　　　　　增：create table t1(id int,name char(10) );  #创建表的时候，和excel一样，需要有字段啊，每个字段还需要只能一下这个字段数据的格式，这里指定的是两个字段列，id和name列，id和name是列名(字段名)，id 后面的int的意思说id这一列中的数据只能是int类型的，name后面的char的意思是，name这一列中的数据只能是char类型的(char表示定长字符串类型)，char里面的10是说这个字段的长度最长为10个字符，如果不指定这个长度，默认长度是1，注意是字符而不是字节。
+
+　　　　　　　　#在创建表的时候，我们去看一下mysql安装目录里面的data文件夹里面的db1文件夹里面的文件，然后我们执行创建表的指令，看看db1文件夹里面的变化，多了两个文件，分别是：db1.frm，db1.ibd文件。
+
+　　　　　　查：show tables；  #查看当前库中所有的表
+
+　　　　　　　　show create table t1; #查看单表的创建信息
+
+　　　　　　　　#还可以通过下面两句来查看表信息，以表格的形式展示结果：
+
+　　　　　　　　desc t1；
+
+　　　　　　　　describe t1；#上下这两句是一样的结果
+
+　　　　　　改：alter table t1 modify name char(3);  #修改字段属性的，将name字段的char长度改为3，改完之后我们在用上面的show create table t1；desc t1；describe t1；来查看一下修改结果。
+
+　　　　　　　　alter table t1 change name name1 char(2);
+
+　　　　　　删：drop table t1;
+
+　　　　3. 行（操作文件（表）中的内容/记录）（*****将来的重中之重）
+
+　　　　　　增：insert into t1 values(1,'dsb1'),(2,'dsb2'),(3,'dsb3'); #往t1表中插入三行数据，注意你插入的每行内容都要和你创建表的时候的字段个数和字段属性对应好，注意每行数据以逗号分隔。
+
+　　　　　　　　insert后面的into可以不用写。
+
+　　　　　　查：select * from t1; #查看t1表中所有字段的数据，select 字段 from 表。
+
+　　　　　　　　select id,name from t1;#查看t1表中的id和name列的数据，其他的不看，注意格式，每个字段逗号分隔，在cmd窗口下只是展示给我们看，将来我们通过程序获取查询数据的时候，就可以这么获取，查询字段的顺序也是可以颠倒的，name,id这样也是可以的。　　
+
+　　　　　　改：update t1 set name='sb' where id=2; #把id为2的行（记录）中的name字段的数据改为sb；id>1;id<=1;等等都可以。
+
+　　　　　　　　update t1 set name='sb',id=88 where id>2; #对两个字段进行修改
+
+　　　　　　　　update t1 set name='sb';#如果不指定where，那么会name字段的所有数据都改成sb。
+
+　　　　　　删：delete from t1 where id=1; #删除id为1的行
+
+　　　　　　清空表：
+
+　　　　　　　　delete from t1; #如果有自增id，新增的数据，仍然是以删除前的最后一样作为起始。
+
+　　　　　　　　truncate table t1;数据量大，删除速度比上一条快，且直接从零开始，
+
+
+　　　　　　　　auto_increment 表示：自增
+
+　　　　　　　　primary key 表示：约束（不能重复且不能为空）；加速查找

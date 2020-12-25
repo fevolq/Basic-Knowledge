@@ -1,0 +1,109 @@
+1.语法
+  select 字段列表
+    from 表1 inner/left/right join 表2
+    on 表1.字段 = 表2.字段;
+
+  当两表均有不同时存在的记录时（即表1内有记录不在表2内，表2内有记录不在表1内，这些记录指得是两个表相关联的那个字段的数据，即employee表内的dep_id字段与department表内的id字段相关联），left（外链接之左连接）优先显示左表记录，right（外链接之右连接）优先显示右表记录，inner（内连接）仅显示同时存在的记录
+eg.select employee.id,employee.name,department.name as depart_name
+     from employee left join department
+     on employee.dep_id=department.id
++----+-----------+-------------+
+| id | name      | depart_name |
++----+-----------+-------------+
+|  1 | egon      | 技术        |
+|  5 | liwenzhou | 技术        |
+|  2 | alex      | 人力资源    |
+|  3 | wupeiqi   | 人力资源    |
+|  4 | yuanhao   | 销售        |
+|  6 | 成龙      | NULL        |
++----+-----------+-------------+
+
+  显示左右两表全部记录（使用union）
+  select*from 表1left join 表2  on 表1.字段=表2.字段
+  union
+  select*from 表1right join 表2 on 表1.字段=表2.字段;
+
+eg.> select*from employee left join department on employee.dep_id=department.id
+    -> union
+    -> select*from employee right join department on employee.dep_id=department.id;
++------+-----------+--------+------+--------+------+----------+
+| id   | name      | sex    | age  | dep_id | id   | name     |
++------+-----------+--------+------+--------+------+----------+
+|    1 | egon      | male   |   18 |    200 |  200 | 技术     |
+|    5 | liwenzhou | male   |   18 |    200 |  200 | 技术     |
+|    2 | alex      | female |   48 |    201 |  201 | 人力资源 |
+|    3 | wupeiqi   | male   |   38 |    201 |  201 | 人力资源 |
+|    4 | yuanhao   | female |   28 |    202 |  202 | 销售     |
+|    6 | 成龙      | male   |   18 |    204 | NULL | NULL     |
+| NULL | NULL      | NULL   | NULL |   NULL |  203 | 运营     |
++------+-----------+--------+------+--------+------+----------+
+
+2.符合条件的连接查询
+
+eg. > select employee.id,employee.name,employee.age,department.name from employee left join department
+    -> on employee.dep_id=department.id
+    -> where age>25
+    -> order by age asc;
++----+---------+------+----------+
+| id | name    | age  | name     |
++----+---------+------+----------+
+|  4 | yuanhao |   28 | 销售     |
+|  3 | wupeiqi |   38 | 人力资源 |
+|  2 | alex    |   48 | 人力资源 |
++----+---------+------+----------+
+
+eg.mysql> select employee.id,employee.name,employee.age,department.name from employee,department
+    -> where employee.dep_id=department.id
+    -> and age>25
+    ->  order by age asc;
++----+---------+------+----------+
+| id | name    | age  | name     |
++----+---------+------+----------+
+|  4 | yuanhao |   28 | 销售     |
+|  3 | wupeiqi |   38 | 人力资源 |
+|  2 | alex    |   48 | 人力资源 |
++----+---------+------+----------+
+
+3.子查询
+  子查询其实就是将你的一个查询结果用括号括起来，这个结果也是一张表，就可以将它交给另外一个sql语句，作为它的一个查询依据来进行操作。
+  3.1.思路
+  eg.首先从部门表里面找到技术部门对应的id
+       mysql> select id from department where name='技术';
+       把查询结果用括号括起来，它就表示一条id=200的数据，然后我们通过员工表来查询dep_id=这条数据作为条件来查询员工的name
+       mysql> select name from employee where dep_id = (select id from department where name='技术');
+
+  就是在一条sql查询语句内插入另一条用括号装着的sql查询语句，在括号内的查询语句会生成一个虚拟表，然后将这个虚拟表与外面的语句中的表进行连接查询。
+
+  3.2 带in关键字的子查询
+  eg.mysql> select id,name from department
+    -> where id in
+    -> (select dep_id from employee group by dep_id having avg(age)>25);
+  eg.mysql> select department.name from department
+    -> inner join employee on department.id=employee.dep_id
+    -> group by department.name
+    -> having avg(age)>25;
+
+  3.3 带比较运算符的子查询
+  查询大于部门内平均年龄的员工名、年龄
+  eg.mysql> select employee.name,employee.age from employee
+    -> inner join
+    -> (select dep_id,avg(age) as avg_age from employee group by dep_id) as employee2
+    -> on employee.dep_id=employee2.dep_id
+    -> where employee.age>employee2.avg_age;
+
+  3.4 带exists（存在）关键字的子查询
+  在使用EXISTS关键字时，内层查询语句不返回查询的记录。而是返回一个真假值（True或False）。
+  当返回True时，外层查询语句将进行查询；当返回值为False时，外层查询语句不进行查询。
+  还可以写not exists，和exists的效果就是反的。
+  eg.mysql> select * from employee
+    -> where exists
+    -> (select id from department where id =100);
+  Empty set (0.00 sec)
+
+
+
+
+
+
+
+

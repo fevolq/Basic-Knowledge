@@ -1,0 +1,55 @@
+1.语法
+create database 库名 charset utf8; ————最后表示使用的编码格式，若没有，则默认使用latin1，若使用中文，则需使用gbk格式
+
+2.数据库命名规则
+　　可以由字母、数字、下划线、＠、＃、＄
+　　区分大小写
+　　唯一性
+　　不能使用关键字如 create select
+　　不能单独使用数字
+　　最长128位
+　　# 基本上跟python或者js的命名规则一样
+
+3.相关操作
+  3.1 查看数据库
+          show databases; ——查看所有数据库
+          show create database 库名; ——查看数据库的编码格式
+          select database(); ——查看当前使用的数据库
+
+  3.2 选择数据库（即选择使用哪个数据库）
+          use 库名;
+
+  3.3 删除数据库
+          drop database 库名;
+
+  3.4 修改数据库
+          alter database 库名 charset utf8; ——可将库的编码修改为utf8格式
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

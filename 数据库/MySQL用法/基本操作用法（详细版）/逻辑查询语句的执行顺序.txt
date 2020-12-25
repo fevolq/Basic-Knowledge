@@ -1,0 +1,13 @@
+1.select语句关键字的定义顺序
+  select,  from,  on,  where,  group by,  having,  order by,  limit
+
+2.select关键字的执行顺序
+  from,  先选择表
+  on,  进行匹配条件过滤。（这里已经把连接操作包含在内）
+  where,  对添加外部行得到的虚拟表进行过滤
+  group by,   对虚拟表进行分组
+  having,  配合group by子句使用，再次进行过滤
+  select,  选择虚拟表的字段
+  order by,  指定排序
+  limit,  指定行数
+  
