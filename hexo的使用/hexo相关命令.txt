@@ -1,0 +1,7 @@
+1.创建标签（栏）：F:\IT教程\blog\fqBlog>hexo new page "tags"
+
+2.创建分类（栏）：F:\IT教程\blog\fqBlog>hexo new page "categories"
+
+3.创建新的文章：F:\IT教程\blog\fqBlog>hexo new "first_test"
+
+注：标签和分类栏创建后，均需在主题themes所使用的具体主题next中的_config.yml文件内释放出对应的栏

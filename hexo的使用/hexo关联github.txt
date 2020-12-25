@@ -1,0 +1,33 @@
+cmd中执行命令
+
+本地安装hexo：
+1.在指定文件夹路径执行安装命令：F:\IT教程\blog>npm install hexo-cli -g
+
+2.初始化：F:\IT教程\blog>hexo init fqBlog
+	（faBlog是自定义的博客名），时间略长
+
+3.进入博客目录安装依赖：F:\IT教程\blog>cd fqBlog
+		       F:\IT教程\blog\fqBlog>npm install
+
+4.本地运行测试：F:\IT教程\blog\fqBlog>hexo s -p 5555  或F:\IT教程\blog\fqBlog>hexo server
+	（5555是自己随便给的端口）
+          运行后可以在浏览器输入http://localhost:5555便可查看效果
+
+
+hexo推送至github的指定博客仓库：
+1.更改“_config.yml”文件的配置：
+			16   url: https://fevolq.github.io
+			106 type: git
+			107 repo: https://github.com/fevolq/fevolq.github.io.git
+			108 branch: master
+	（注意要保存文件）			
+
+2.安装插件：F:\IT教程\blog\fqBlog>npm install hexo-deployer-git --save
+
+3.生成：F:\IT教程\blog\fqBlog>hexo g
+
+4.提交（至github）：F:\IT教程\blog\fqBlog>hexo d
+	（注：中途可能会需要输入github的用户名和密码，输入密码时是隐形的，直接输入即可）
+
+注：首次推送才需要1、2步
+博客地址：https://fevolq.github.io
