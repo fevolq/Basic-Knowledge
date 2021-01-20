@@ -16,6 +16,18 @@ for m,e in ab.items():      #items()方法可以同时解读键和值
 if '4' in ab:
     print('\n4对应%s'%ab['4'])
     
+a = {'1':'2'}
+b = {'3':'4'}
+a.update(b)     #将两个字典合并
+
+#创建空字典
+c = {}
+d = dict()
+print(type(c),type(d))
+
+e = dict('q'='w','a'='s',2='r')     #使用dict关键字创建字典
+#print(e)
+    
 #键值对在字典中的标记方式：d = {键 : 值，键1 ：值1， 键2 ： 值2}
 #字典中的键值对没有顺序
 '''字典中的items的使用,字典的items用法，会返回一个由元组构成的列表，
